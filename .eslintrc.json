@@ -5,7 +5,6 @@
     "jest": true
   },
   "extends": [
-    "airbnb-base",
     "plugin:@typescript-eslint/recommended",
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
@@ -52,7 +51,12 @@
       }
     ],
     "no-useless-constructor": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "_"
+      }
+    ],
     "@typescript-eslint/no-useless-constructor": "error",
     "@typescript-eslint/camelcase": "off",
     "import-helpers/order-imports": [
@@ -66,24 +70,39 @@
           "/^@modules/",
           "/^@config/",
           "/^@shared/",
-          ["parent", "sibling", "index"]
+          [
+            "parent",
+            "sibling",
+            "index"
+          ]
         ],
-        "alphabetize": { "order": "asc", "ignoreCase": true }
+        "alphabetize": {
+          "order": "asc",
+          "ignoreCase": true
+        }
       }
     ]
   },
   "overrides": [
     {
-      "files": ["*.js"],
+      "files": [
+        "*.js"
+      ],
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
       }
     }
   ],
   "settings": {
-    "import/extensions": [".ts", ".js"],
+    "import/extensions": [
+      ".ts",
+      ".js"
+    ],
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".js"]
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".js"
+      ]
     },
     "import/resolver": {
       "typescript": {
