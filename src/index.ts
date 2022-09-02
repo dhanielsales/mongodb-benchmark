@@ -11,7 +11,7 @@ import { setup } from './setup';
     const client = await mongoConnection();
     const db = client.db("benchmark");
     
-    const bm = new Benchmark(db, { type: "read" })
+    const bm = new Benchmark(db, { type: "update" })
     await bm.run()
 
     client.close()

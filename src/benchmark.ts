@@ -1,17 +1,19 @@
 import { Db } from "mongodb"
 import { nanoid } from "nanoid";
 
+import { updateWriteObj } from './write-obj'
+
 const CONCURRENCY = Number(process.env.CONCURRENCY);
 const EXECUTIONS = Number(process.env.EXECUTIONS);
-const READ_DATABASE_SIZE = Number(process.env.READ_DATABASE_SIZE);
 
-type BenchmarkType =  "read" | "write"
+type BenchmarkType =  "read" | "write" | "update"
 
 interface PerformResult {
   type:  BenchmarkType;
   "duration (ms)": number;
   "query status": "success" | "failure";
   "query result": any;
+  "related index": number | null;
 }
 
 interface Options {
@@ -66,18 +68,30 @@ export class Benchmark {
 
       const start = new Date().getTime();
 
+      const collection = this.db.collection('benchmark-data');
+
       let queryResult: any;
+      let index: number | null = null;
   
       try {
         if (this.type === "read") {
-          const randomIndexField = Math.floor(Math.random() * currentIndex.index);
-          const collection = this.db.collection('benchmark-data');
-          queryResult = await collection.find({ index: randomIndexField }).toArray()
+          index = Math.floor(Math.random() * currentIndex.index);
+          queryResult = await collection.find({ index }).toArray()
         } 
         
         if (this.type === "write") {
-          const collection = this.db.collection('benchmark-data');
-          queryResult = await collection.insertOne({ generatedId: nanoid(), index: currentIndex.index + 1 })
+          index = currentIndex.index + 1
+          queryResult = await collection.insertOne({ generatedId: nanoid(), index })
+        }
+
+        if (this.type === "update") {
+          index = Math.floor(Math.random() * currentIndex.index);
+          queryResult = await collection.updateOne(
+            { index },
+            {
+              $set: { writeObj: updateWriteObj }
+            }
+          )
         }
       
         const duration = new Date().getTime() - start;
@@ -86,7 +100,8 @@ export class Benchmark {
           type: this.type,
           "duration (ms)": duration,
           "query status": "success",
-          "query result": JSON.stringify(queryResult)
+          "query result": JSON.stringify(queryResult),
+          "related index": index
         })
 
         this.successes++
@@ -101,7 +116,8 @@ export class Benchmark {
           type: this.type,
           "duration (ms)": duration,
           "query status": "failure",
-          "query result": "None"
+          "query result": "None",
+          "related index": index
         })
 
         this.failures++

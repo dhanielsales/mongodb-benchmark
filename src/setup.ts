@@ -4,6 +4,8 @@ import Readline from 'readline'
 
 import { mongoConnection } from "./mongo-connection";
 
+import { initialWriteObj } from './write-obj';
+
 const READ_DATABASE_SIZE = Number(process.env.READ_DATABASE_SIZE);
 
 async function populateReadDb(): Promise<void> {
@@ -13,7 +15,7 @@ async function populateReadDb(): Promise<void> {
 
   const db = client.db("benchmark");
   
-  const readDatabaseData = Array.from({ length: READ_DATABASE_SIZE }).map((_, index) => ({ generatedId: nanoid(), index }))
+  const readDatabaseData = Array.from({ length: READ_DATABASE_SIZE }).map((_, index) => ({ generatedId: nanoid(), index, writeObj: initialWriteObj }))
 
   const collection = db.collection('benchmark-data');
 
@@ -41,11 +43,11 @@ async function validateReadDb(): Promise<boolean> {
 
   const collection = db.collection('benchmark-data');
 
-  const results = await collection.find().toArray()
+  const results = await collection.countDocuments()
 
   await client.close();
 
-  return results.length > 0 ? true : false;
+  return results === READ_DATABASE_SIZE;
 }
 
 async function createQuestion(): Promise<string> {

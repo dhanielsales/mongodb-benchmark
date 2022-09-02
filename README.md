@@ -13,5 +13,5 @@ The application will populate a database with some data to simulate a large data
 To create a mongo container instance for run a benchmark locally
 
 ```bash
-docker run --cpus="1" --memory="2000M" --name mongodb-bm -e "MONGO_INITDB_ROOT_USERNAME=user" -e "MONGO_INITDB_ROOT_PASSWORD=pass" -e "MONGO_INITDB_DATABASE=benchmark" -d -p 27017:27017 mongo
+docker run --cpus="0.5" --memory="500M" --name mongodb-bm -e "MONGO_INITDB_ROOT_USERNAME=user" -e "MONGO_INITDB_ROOT_PASSWORD=pass" -e "MONGO_INITDB_DATABASE=benchmark" -d -p 27017:27017 mongo
 ```
